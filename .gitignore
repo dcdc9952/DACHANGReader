@@ -1,66 +1,11 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# C extensions
-*.c
-*.o
-*.so
-
-# Distribution / packaging
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
+*.so
 *.egg
-
-# PyInstaller
-*.spec
-build/
+*.egg-info/
 dist/
-hermes_build/
-venv_dcr/
-
-# Virtual environments
-venv/
-ENV/
-env/
-.venv/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Project specific
-books/
-*.log
-screenshots/
-commands/
-results/
-logs/
-test.txt
-
-# Windows
-*.lnk
-$RECYCLE.BIN/
-System Volume Information/
+build/
+*.spec
