@@ -746,7 +746,7 @@ class LibraryWidget(QWidget):
         # Import button
         import_btn = RoundedButton("+ 导入书籍", "#00B894")
         import_btn.setFixedWidth(120)
-        import_btn.clicked.connect(self.parent().import_book)
+        import_btn.clicked.connect(self.window().import_book)
         header.addWidget(import_btn)
         
         layout.addLayout(header)
