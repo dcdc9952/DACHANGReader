@@ -746,7 +746,7 @@ class LibraryWidget(QWidget):
         # Import button
         import_btn = RoundedButton("+ 导入书籍", "#00B894")
         import_btn.setFixedWidth(120)
-        import_btn.clicked.connect(self.window().import_book)
+        import_btn.clicked.connect(lambda: self.parent().import_book() if self.parent() else None)
         header.addWidget(import_btn)
         
         layout.addLayout(header)
@@ -880,8 +880,7 @@ class DaChangReader(QMainWindow):
         self.content_stack = QStackedWidget()
         
         # Library view
-        self.library_widget = LibraryWidget()
-        self.library_widget.parent = lambda: self
+        self.library_widget = LibraryWidget(self)
         self.content_stack.addWidget(self.library_widget)
         
         # Reading view
