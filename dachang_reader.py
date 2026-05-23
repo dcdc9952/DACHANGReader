@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
     QToolBar, QStatusBar, QMenuBar, QMenu, QAction, QDialog,
     QProgressBar, QComboBox, QFontComboBox, QColorDialog, QSplitter,
     QScrollBar, QGraphicsDropShadowEffect, QSizePolicy, QShortcut,
-    QKeySequenceEdit, QMessageBox, QInputDialog, QToolButton
+    QKeySequenceEdit, QMessageBox, QInputDialog, QToolButton, QStackedWidget
 )
 from PyQt5.QtCore import (
     Qt, QSize, QRect, QTimer, QPropertyAnimation, QEasingCurve,
@@ -1414,33 +1414,6 @@ class DaChangReader(QMainWindow):
                         self.add_to_recent(book)
         except Exception as e:
             print(f"Error loading library: {e}")
-
-
-class QStackedWidget(QWidget):
-    """Simple stacked widget implementation"""
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.widgets = []
-        self.current_index = 0
-        
-    def addWidget(self, widget):
-        self.widgets.append(widget)
-        self.layout.addWidget(widget)
-        if len(self.widgets) == 1:
-            widget.show()
-        else:
-            widget.hide()
-            
-    def setCurrentIndex(self, index):
-        if 0 <= index < len(self.widgets):
-            self.widgets[self.current_index].hide()
-            self.current_index = index
-            self.widgets[self.current_index].show()
-            
-    def currentIndex(self):
-        return self.current_index
 
 
 def main():
