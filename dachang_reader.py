@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import (
     Qt, QSize, QRect, QTimer, QPropertyAnimation, QEasingCurve,
-    QSettings, QDir, QUrl, QFileInfo
+    QSettings, QDir, QUrl, QFileInfo, pyqtSignal
 )
 from PyQt5.QtGui import (
     QColor, QPalette, QFont, QIcon, QKeySequence, QTextCursor,
@@ -199,6 +199,8 @@ class ColorfulIconButton(QPushButton):
 
 class BookCard(QWidget):
     """Book card widget for library view"""
+    clicked = pyqtSignal(object)  # Signal to emit when card is clicked
+
     def __init__(self, book, parent=None):
         super().__init__(parent)
         self.book = book
@@ -325,6 +327,7 @@ class BookCard(QWidget):
         if event.button() == Qt.LeftButton:
             self.card_frame.move(2, 2)
             self.card_frame.setStyleSheet(self.card_frame.styleSheet().replace("border: 1px solid #e0e0e0;", "border: 2px solid " + self.card_color + ";"))
+            self.clicked.emit(self.book)  # Emit signal with the book
     
     def mouseReleaseEvent(self, event):
         self.card_frame.move(0, 0)
@@ -686,14 +689,6 @@ class AboutDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(40, 40, 40, 40)
         layout.setSpacing(20)
-        layout.addAlignment(Qt.AlignCenter)
-        
-        # Icon
-        icon_label = QLabel("📚")
-        icon_label.setStyleSheet("font-size: 60px;")
-        icon_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(icon_label)
-        
         # Title
         title = QLabel("大昌阅读器")
         title.setStyleSheet("font-size: 28px; font-weight: bold; color: #333;")
@@ -798,17 +793,26 @@ class LibraryWidget(QWidget):
         
     def add_book_card(self, book):
         card = BookCard(book)
-        card.mousePressEvent = lambda e: self.select_book(book, card)
+        card.clicked.connect(self.select_book)  # Connect to signal instead of overriding
         self.books.append((book, card))
         self.update_grid()
     
-    def select_book(self, book, card):
+    def select_book(self, book):
+        # Find the card for this book
+        card = None
+        for b, c in self.books:
+            if b == book:
+                card = c
+                break
+        if not card:
+            return
+
         if self.book_selected:
             self.book_selected.setStyleSheet(self.book_selected.styleSheet().replace("border: 2px solid #5B8DEF;", "border: 1px solid #e0e0e0;"))
         card.setStyleSheet(card.styleSheet().replace("border: 1px solid #e0e0e0;", "border: 2px solid #5B8DEF;"))
         self.book_selected = card
-        if self.parent() and hasattr(self.parent(), 'open_book'):
-            self.parent().open_book(book)
+        if self._main_window:
+            self._main_window.open_book(book)
     
     def filter_books(self, text):
         for book, card in self.books:
@@ -881,8 +885,7 @@ class DaChangReader(QMainWindow):
         self.content_stack = QStackedWidget()
         
         # Library view
-        self.library_widget = LibraryWidget()
-        self.library_widget.parent = lambda: self
+        self.library_widget = LibraryWidget(self)  # Pass self as parent for _main_window reference
         self.content_stack.addWidget(self.library_widget)
         
         # Reading view
